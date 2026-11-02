@@ -1,0 +1,13 @@
+/* Fixture stylesheet for DC43FragmentInputsTest.NestedPage: covers the parts
+   emitted by its render closure (Shell, RowHost, and the page's fragment). */
+:where([part="shell_root"], [part="row"], [part="home"]) {
+  display: block;
+}
+
+[part="sort_select"] {
+  appearance: none;
+}
+
+[part="opt"] {
+  color: inherit;
+}

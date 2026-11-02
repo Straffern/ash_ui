@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "scripts": {
+    "build": "npx esbuild boot.js --bundle --minify --format=iife --global-name=AshUi --outfile=../../packages/ash_ui_phoenix/priv/static/ash_ui.min.js && node write_sources_sha256.mjs",
+    "sources:sha256": "node write_sources_sha256.mjs",
+    "test": "node --test *.test.mjs"
+  }
+}

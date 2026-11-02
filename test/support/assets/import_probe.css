@@ -1,0 +1,6 @@
+/* Probe sheet: contains a banned @import. */
+@import "somewhere/else.css";
+
+[part="shell_root"] {
+  display: block;
+}

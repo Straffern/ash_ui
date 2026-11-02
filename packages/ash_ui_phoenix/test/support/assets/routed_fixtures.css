@@ -1,0 +1,4 @@
+/* Shared fixture stylesheet for routed test pages in this package. */
+[part="root"] {
+  display: block;
+}

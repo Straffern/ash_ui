@@ -1,0 +1,75 @@
+defmodule AshUiDatastar.MixProject do
+  use Mix.Project
+
+  @source_url "https://github.com/hyperbob-labs/ash_ui"
+
+  def project do
+    [
+      app: :ash_ui_datastar,
+      version: "0.1.0",
+      elixir: "~> 1.19",
+      description: description(),
+      package: package(),
+      source_url: @source_url,
+      start_permanent: Mix.env() == :prod,
+      consolidate_protocols: Mix.env() != :test,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      deps: deps()
+    ]
+  end
+
+  def application do
+    [
+      extra_applications: [:logger, :crypto],
+      mod: {AshUi.Datastar.Application, []}
+    ]
+  end
+
+  defp deps do
+    [
+      {:ash, "~> 3.36"},
+      # TEST-ONLY: LiveView is the executable oracle for the copied
+      # AshUi.Diff kernel — never a runtime dependency here.
+      sibling(:ash_ui_phoenix, "../ash_ui_phoenix", only: :test),
+      {:lazy_html, ">= 0.1.0", only: :test},
+      sibling(:ash_ui, "../.."),
+      {:plug, "~> 1.16"},
+      {:jason, "~> 1.2"},
+      {:bandit, "~> 1.6", only: :test},
+      {:simple_sat, "~> 0.1", only: :test}
+    ]
+  end
+
+  defp description do
+    "Plug, HTTP, and SSE transport adapter for AshUi resources using Datastar."
+  end
+
+  defp package do
+    [
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => @source_url},
+      maintainers: ["bob@hyperbob.ai"],
+      files: [
+        "lib",
+        "priv/static",
+        ".formatter.exs",
+        "mix.exs",
+        "README*",
+        "CHANGELOG*",
+        "LICENSE*",
+        "NOTICE*"
+      ]
+    ]
+  end
+
+  # Inside this repository the sibling packages resolve by path. Set
+  # ASH_UI_HEX=1 to resolve them from Hex for `mix hex.build` and `mix hex.publish`.
+  defp sibling(app, path, opts \\ []) do
+    if System.get_env("ASH_UI_HEX"),
+      do: {app, "~> 0.1.0", opts},
+      else: {app, Keyword.put(opts, :path, path)}
+  end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_env), do: ["lib"]
+end

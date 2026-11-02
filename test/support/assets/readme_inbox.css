@@ -1,0 +1,6 @@
+/* Paint for the README example (AshUi.ReadmeExampleTest.InboxScreen). */
+[part="inbox"] { display: grid; gap: 0.5rem; }
+[part="messages"] { list-style: none; padding: 0; }
+[part="message_row"] { cursor: pointer; }
+[part="message_row"][aria-selected="true"] { font-weight: 600; }
+[part="composer"], [part="draft_input"], [part="send"] { font: inherit; }

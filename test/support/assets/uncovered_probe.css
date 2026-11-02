@@ -1,0 +1,4 @@
+/* Probe sheet: intentionally covers only [part="covered"]. */
+[part="covered"] {
+  display: block;
+}

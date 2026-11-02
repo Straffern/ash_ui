@@ -1,0 +1,305 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800" role="img" aria-labelledby="title desc">
+  <title id="title">Model your UI with Ash: a screen is a resource, and each session gets its own row.</title>
+  <desc id="desc">The InboxScreen resource holds one row per browser session. Each row is rendered through the :view calculation into its own browser. A click in a browser comes back as an action on the row. The screen reads the Message domain resource through a relationship, and Message notifications cause a reload.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/>
+      <stop offset="1" stop-color="#141b2d"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.55" cy="0.42" r="0.55">
+      <stop offset="0" stop-color="#3b5bdb" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#3b5bdb" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="screenHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fb923c" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#fb923c" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="viewHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#60a5fa" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#60a5fa" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="domainHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4ade80" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#4ade80" stop-opacity="0.03"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#ffffff" stroke-opacity="0.03"/>
+    </pattern>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <!-- Arrowheads: tip at the path end, oriented along the final tangent. -->
+    <marker id="hOrange" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M1 1.5L11 6L1 10.5L3.5 6z" fill="#fb923c"/>
+    </marker>
+    <marker id="hBlue" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M1 1.5L11 6L1 10.5L3.5 6z" fill="#60a5fa"/>
+    </marker>
+    <marker id="hViolet" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M1 1.5L11 6L1 10.5L3.5 6z" fill="#a78bfa"/>
+    </marker>
+    <marker id="hGreen" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M1 1.5L11 6L1 10.5L3.5 6z" fill="#4ade80"/>
+    </marker>
+    <marker id="hRed" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M1 1.5L11 6L1 10.5L3.5 6z" fill="#f87171"/>
+    </marker>
+    <style>
+      .sans { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .card { fill: #141b2c; stroke: #26314b; stroke-width: 1.25; }
+      .inset { fill: #1b2439; }
+      .muted { fill: #7f8cab; }
+      .text { fill: #dbe3f4; }
+      .label { font-size: 10.5px; letter-spacing: 0.14em; fill: #66749a; font-weight: 600; }
+      .wire { fill: none; stroke-width: 2; stroke-linecap: round; }
+      .c-fn { fill: #93c5fd; }
+      .c-atom { fill: #8b98b5; }
+      .c-rel { fill: #4ade80; }
+      .c-attr { fill: #fdba74; }
+      .c-act { fill: #c4b5fd; }
+      .c-p { fill: #c9d4ea; }
+    </style>
+  </defs>
+
+  <rect width="1280" height="800" rx="24" fill="url(#bg)"/>
+  <rect width="1280" height="800" rx="24" fill="url(#grid)"/>
+  <rect width="1280" height="800" rx="24" fill="url(#glow)"/>
+
+  <!-- Title -->
+  <text x="404" y="54" text-anchor="end" class="sans" font-size="32" font-weight="750" fill="#f3f6fc" letter-spacing="-0.01em">Model your UI <tspan fill="#fb923c">with Ash.</tspan></text>
+  <!-- Ash logo (ash-project/ash logos/ash_logo_orange.svg, MIT) -->
+  <g transform="translate(414 22) scale(0.32)" aria-label="Ash logo">
+      <path d="M61.1819 0L122.364 100H119.033L44.1681 27.8086L61.1819 0Z" fill="#FF5757"/>
+      <path d="M22.2352 100H29.4163L67.9877 53.5421L43.6726 30.0954L22.2352 100Z" fill="#FF914D"/>
+      <path d="M52.3575 100H32.0029L52.7027 75.0678L52.3575 100Z" fill="#FFBD59"/>
+      <path d="M54.3478 100H91.6425L54.725 72.7514L54.3478 100Z" fill="#FF5757"/>
+      <path d="M95.8815 100L70.8665 56.3181L116.166 100H95.8815Z" fill="#FF914D"/>
+      <path d="M92.5593 98.2033L55.9368 71.1724L68.4492 56.1016L92.5593 98.2033Z" fill="#FFBD59"/>
+      <path d="M20.1537 100H0L40.4074 33.9553L20.1537 100Z" fill="#FFBD59"/>
+  </g>
+  <text x="50" y="83" class="sans muted" font-size="15.5">Model each screen as a resource and give every session its own row. No more parallel vocabularies for the business domain and your UI.</text>
+
+  <!-- ===================== Screen resource ===================== -->
+  <g transform="translate(50 120)" filter="url(#shadow)">
+    <rect class="card" width="420" height="388" rx="16" stroke="#fb923c" stroke-opacity="0.5"/>
+    <path d="M0 16a16 16 0 0 1 16-16h388a16 16 0 0 1 16 16v32H0z" fill="url(#screenHead)"/>
+    <text x="20" y="30" class="mono" font-size="15" font-weight="700" fill="#fb923c">MyApp.Ui.InboxScreen</text>
+    <text x="400" y="30" text-anchor="end" class="sans label">UI RESOURCE · ETS</text>
+
+    <g class="mono" font-size="12.5">
+      <text x="20" y="76" class="sans label">ATTRIBUTES</text>
+      <text x="140" y="76" class="c-attr">session_id · selected_id · draft</text>
+
+      <text x="20" y="102" class="sans label">RELATIONSHIPS</text>
+      <text x="140" y="102" class="c-rel">messages</text>
+
+      <text x="20" y="128" class="sans label">CALCULATIONS</text>
+      <rect x="134" y="113" width="54" height="21" rx="6" fill="#60a5fa" fill-opacity="0.16" stroke="#60a5fa" stroke-opacity="0.55"/>
+      <text x="161" y="128" text-anchor="middle" fill="#93c5fd" font-weight="700">:view</text>
+
+      <text x="20" y="154" class="sans label">ACTIONS</text>
+      <text x="140" y="154" class="c-act">mount · select</text>
+      <text x="140" y="172" class="c-act">edit_draft · send_draft</text>
+    </g>
+
+    <line x1="20" y1="190" x2="400" y2="190" stroke="#26314b"/>
+    <text x="20" y="212" class="sans label">ROWS · ONE PER SESSION</text>
+
+    <g class="mono" font-size="12">
+      <text x="44" y="236" class="muted">session_id</text>
+      <text x="176" y="236" class="muted">selected_id</text>
+      <text x="298" y="236" class="muted">draft</text>
+
+      <rect class="inset" x="20" y="246" width="380" height="36" rx="8"/>
+      <circle cx="33" cy="264" r="4.5" fill="#f472b6"/>
+      <text x="44" y="268" class="text">a91f</text>
+      <text x="176" y="268" class="c-attr">lunch</text>
+      <text x="298" y="268" class="muted">nil</text>
+
+      <rect class="inset" x="20" y="290" width="380" height="36" rx="8"/>
+      <circle cx="33" cy="308" r="4.5" fill="#facc15"/>
+      <text x="44" y="312" class="text">c07b</text>
+      <text x="176" y="312" class="c-attr">report</text>
+      <text x="298" y="312" class="c-attr">"On my way"</text>
+
+      <rect class="inset" x="20" y="334" width="380" height="36" rx="8"/>
+      <circle cx="33" cy="352" r="4.5" fill="#22d3ee"/>
+      <text x="44" y="356" class="text">e5d2</text>
+      <text x="176" y="356" class="c-attr">deploy</text>
+      <text x="298" y="356" class="c-attr">"LGTM"</text>
+    </g>
+  </g>
+
+  <!-- Screen <-> domain: read, send, notify -->
+  <path class="wire" d="M110 586 L110 514" stroke="#4ade80" marker-end="url(#hGreen)"/>
+  <text x="120" y="554" class="sans" font-size="12" fill="#4ade80">reads <tspan class="mono">messages</tspan></text>
+  <path class="wire" d="M240 512 L240 584" stroke="#a78bfa" marker-end="url(#hViolet)"/>
+  <text x="250" y="554" class="sans" font-size="12" fill="#c4b5fd"><tspan class="mono">send_draft</tspan> → <tspan class="mono">send</tspan></text>
+  <path class="wire" d="M424 586 L424 514" stroke="#f87171" stroke-dasharray="5 5" marker-end="url(#hRed)"/>
+  <text x="432" y="554" class="sans" font-size="12" fill="#f87171">notify</text>
+
+  <!-- ===================== Domain resource ===================== -->
+  <g transform="translate(50 590)" filter="url(#shadow)">
+    <rect class="card" width="420" height="180" rx="14" stroke="#4ade80" stroke-opacity="0.35"/>
+    <path d="M0 14a14 14 0 0 1 14-14h392a14 14 0 0 1 14 14v26H0z" fill="url(#domainHead)"/>
+    <text x="18" y="26" class="mono" font-size="13.5" font-weight="700" fill="#4ade80">MyApp.Mail.Message</text>
+    <text x="402" y="26" text-anchor="end" class="sans label">DOMAIN RESOURCE · POSTGRES</text>
+
+    <g class="mono" font-size="12.5">
+      <text x="18" y="64" class="sans label">ATTRIBUTES</text>
+      <text x="140" y="64" class="text">id · subject · inserted_at</text>
+      <text x="18" y="88" class="sans label">ACTIONS</text>
+      <text x="140" y="88" class="c-act">read · send · archive</text>
+    </g>
+
+    <g class="sans" font-size="12">
+      <rect class="inset" x="18" y="104" width="122" height="28" rx="7"/>
+      <text x="79" y="122" text-anchor="middle" class="text">Quarterly report</text>
+      <rect class="inset" x="149" y="104" width="122" height="28" rx="7"/>
+      <text x="210" y="122" text-anchor="middle" class="text">Lunch on Friday?</text>
+      <rect class="inset" x="280" y="104" width="122" height="28" rx="7"/>
+      <text x="341" y="122" text-anchor="middle" class="text">Deploy is green</text>
+    </g>
+    <text x="18" y="160" class="mono" font-size="11.5" fill="#f87171">notifiers: [AshUi.Notifier]</text>
+  </g>
+
+  <!-- ===================== :view calculation ===================== -->
+  <g transform="translate(520 150)" filter="url(#shadow)">
+    <rect class="card" width="370" height="380" rx="16" stroke="#60a5fa" stroke-opacity="0.55"/>
+    <path d="M0 16a16 16 0 0 1 16-16h338a16 16 0 0 1 16 16v36H0z" fill="url(#viewHead)"/>
+    <text x="18" y="32" class="mono" font-size="15" font-weight="700" fill="#93c5fd">:view</text>
+    <text x="352" y="32" text-anchor="end" class="sans label">CALCULATION OF THE ROW</text>
+
+    <g class="mono" font-size="11.5">
+      <text x="18" y="80"><tspan class="c-fn">calculate</tspan><tspan class="c-atom"> :view</tspan><tspan class="c-p">, RenderTree, </tspan><tspan class="c-fn">expr</tspan><tspan class="c-p">(</tspan></text>
+      <text x="32" y="100"><tspan class="c-fn">section</tspan><tspan class="c-p">(</tspan><tspan class="c-atom">:inbox</tspan><tspan class="c-p">, [], [</tspan></text>
+      <text x="46" y="120"><tspan class="c-fn">each</tspan><tspan class="c-p">(</tspan><tspan class="c-rel">messages</tspan><tspan class="c-p">, </tspan><tspan class="c-atom">:m</tspan><tspan class="c-p">, [key: m.id], [</tspan></text>
+      <text x="60" y="140"><tspan class="c-fn">item</tspan><tspan class="c-p">(</tspan><tspan class="c-atom">:row</tspan><tspan class="c-p">, [</tspan></text>
+      <text x="74" y="160"><tspan class="c-p">state: [selected: m.id == </tspan><tspan class="c-attr">selected_id</tspan><tspan class="c-p">],</tspan></text>
+      <rect x="68" y="166" width="152" height="20" rx="5" fill="#a78bfa" fill-opacity="0.16"/>
+      <text x="74" y="180"><tspan class="c-p">on_click: </tspan><tspan class="c-act" font-weight="700">:select</tspan><tspan class="c-p">,</tspan></text>
+      <text x="74" y="200"><tspan class="c-p">action_input: %{id: m.id}</tspan></text>
+      <text x="60" y="220"><tspan class="c-p">], [</tspan><tspan class="c-fn">text</tspan><tspan class="c-p">(m.subject)])</tspan></text>
+      <text x="46" y="240"><tspan class="c-p">]),</tspan></text>
+      <text x="46" y="260"><tspan class="c-fn">input</tspan><tspan class="c-p">(</tspan><tspan class="c-atom">:draft</tspan><tspan class="c-p">, [value: </tspan><tspan class="c-attr">draft</tspan><tspan class="c-p">,</tspan></text>
+      <text x="60" y="280"><tspan class="c-p">on_input: </tspan><tspan class="c-act">:edit_draft</tspan><tspan class="c-p">])</tspan></text>
+      <text x="32" y="300"><tspan class="c-p">])</tspan></text>
+      <text x="18" y="320"><tspan class="c-p">)</tspan></text>
+    </g>
+
+    <line x1="18" y1="338" x2="352" y2="338" stroke="#26314b"/>
+    <text x="18" y="362" class="sans" font-size="11.5" fill="#7f8cab">depends on <tspan class="mono c-rel">messages</tspan> · <tspan class="mono c-attr">selected_id</tspan> · <tspan class="mono c-attr">draft</tspan></text>
+  </g>
+
+  <!-- Rows -> :view (orange). Straight lead-in before each head keeps it on the tangent. -->
+  <path class="wire" d="M472 384 C 494 384, 494 412, 506 412 L 518 412" stroke="#fb923c" marker-end="url(#hOrange)"/>
+  <path class="wire" d="M472 428 C 494 428, 494 446, 506 446 L 518 446" stroke="#fb923c" marker-end="url(#hOrange)"/>
+  <path class="wire" d="M472 472 C 494 472, 494 480, 506 480 L 518 480" stroke="#fb923c" marker-end="url(#hOrange)"/>
+
+  <!-- :view -> browsers (blue) -->
+  <path class="wire" d="M892 290 L 904 290 C 940 290, 940 166, 960 166 L 976 166" stroke="#60a5fa" marker-end="url(#hBlue)"/>
+  <path class="wire" d="M892 330 L 904 330 C 940 330, 940 340, 960 340 L 976 340" stroke="#60a5fa" marker-end="url(#hBlue)"/>
+  <path class="wire" d="M892 370 L 904 370 C 940 370, 940 514, 960 514 L 976 514" stroke="#60a5fa" marker-end="url(#hBlue)"/>
+
+  <!-- Event: click in browser A -> :select on the row (violet), routed above the :view card -->
+  <path class="wire" d="M1150 200 C 1150 140, 1150 114, 1120 114 L 500 114 C 488 114, 486 126, 486 138 L 486 262 C 486 270, 482 274, 474 274" stroke="#a78bfa" stroke-dasharray="6 5" marker-end="url(#hViolet)"/>
+  <text x="700" y="107" text-anchor="middle" class="sans" font-size="12.5" fill="#c4b5fd">click → <tspan class="mono">:select</tspan> runs on that session's row</text>
+
+  <!-- ===================== Browsers: one tab, one session, one row ===================== -->
+  <text x="1230" y="106" text-anchor="end" class="sans label">ONE SESSION PER TAB</text>
+  <g class="sans" font-size="12">
+    <!-- Tab A: session a91f -->
+    <g transform="translate(980 120)" filter="url(#shadow)">
+      <rect width="250" height="160" rx="12" fill="#0d1322" stroke="#f472b6" stroke-opacity="0.6" stroke-width="1.25"/>
+      <path d="M1 31H249V148a11 11 0 0 1-11 11H12a11 11 0 0 1-11-11z" fill="#141b2c"/>
+      <circle cx="14" cy="16" r="4" fill="#ff5f57" fill-opacity="0.85"/>
+      <circle cx="27" cy="16" r="4" fill="#febc2e" fill-opacity="0.85"/>
+      <circle cx="40" cy="16" r="4" fill="#28c840" fill-opacity="0.85"/>
+      <path d="M54 31 Q60 31 60 25 V12 Q60 6 66 6 H160 Q166 6 166 12 V25 Q166 31 172 31 Z" fill="#141b2c"/>
+      <circle cx="73" cy="19" r="4" fill="#f472b6"/>
+      <text x="83" y="23" fill="#dbe3f4" font-size="11.5">Inbox</text>
+      <text x="155" y="23" text-anchor="middle" fill="#56627f" font-size="11">×</text>
+      <text x="180" y="23" fill="#56627f" font-size="14">+</text>
+      <rect x="10" y="36" width="230" height="20" rx="10" fill="#0d1322"/>
+      <text x="22" y="50" class="mono" font-size="10" fill="#7f8cab">localhost/inbox</text>
+      <rect x="160" y="39" width="76" height="14" rx="7" fill="#f472b6" fill-opacity="0.16"/>
+      <text x="198" y="49.5" text-anchor="middle" class="mono" font-size="9.5" fill="#f472b6">session a91f</text>
+      <text x="16" y="78" class="muted">Quarterly report</text>
+      <rect x="10" y="84" width="230" height="20" rx="5" fill="#f472b6" fill-opacity="0.15"/>
+      <text x="16" y="99" fill="#f3f6fc" font-weight="600">Lunch on Friday?</text>
+      <text x="16" y="120" class="muted">Deploy is green</text>
+      <rect x="10" y="130" width="166" height="23" rx="6" fill="#0d1322" stroke="#26314b"/>
+      <text x="20" y="146" fill="#56627f">Write a reply…</text>
+      <rect x="184" y="130" width="56" height="23" rx="6" fill="#a78bfa" fill-opacity="0.22"/>
+      <text x="212" y="146" text-anchor="middle" fill="#ddd2ff">Send</text>
+      <path d="M166 83 L166 101 L171 96 L175 105 L178 103.5 L174 95 L181 95 Z" fill="#f3f6fc" stroke="#0b0f1a" stroke-width="1"/>
+    </g>
+    <!-- Tab B: session c07b -->
+    <g transform="translate(980 294)" filter="url(#shadow)">
+      <rect width="250" height="160" rx="12" fill="#0d1322" stroke="#facc15" stroke-opacity="0.6" stroke-width="1.25"/>
+      <path d="M1 31H249V148a11 11 0 0 1-11 11H12a11 11 0 0 1-11-11z" fill="#141b2c"/>
+      <circle cx="14" cy="16" r="4" fill="#ff5f57" fill-opacity="0.85"/>
+      <circle cx="27" cy="16" r="4" fill="#febc2e" fill-opacity="0.85"/>
+      <circle cx="40" cy="16" r="4" fill="#28c840" fill-opacity="0.85"/>
+      <path d="M54 31 Q60 31 60 25 V12 Q60 6 66 6 H160 Q166 6 166 12 V25 Q166 31 172 31 Z" fill="#141b2c"/>
+      <circle cx="73" cy="19" r="4" fill="#facc15"/>
+      <text x="83" y="23" fill="#dbe3f4" font-size="11.5">Inbox</text>
+      <text x="155" y="23" text-anchor="middle" fill="#56627f" font-size="11">×</text>
+      <text x="180" y="23" fill="#56627f" font-size="14">+</text>
+      <rect x="10" y="36" width="230" height="20" rx="10" fill="#0d1322"/>
+      <text x="22" y="50" class="mono" font-size="10" fill="#7f8cab">localhost/inbox</text>
+      <rect x="160" y="39" width="76" height="14" rx="7" fill="#facc15" fill-opacity="0.16"/>
+      <text x="198" y="49.5" text-anchor="middle" class="mono" font-size="9.5" fill="#facc15">session c07b</text>
+      <rect x="10" y="63" width="230" height="20" rx="5" fill="#facc15" fill-opacity="0.15"/>
+      <text x="16" y="78" fill="#f3f6fc" font-weight="600">Quarterly report</text>
+      <text x="16" y="99" class="muted">Lunch on Friday?</text>
+      <text x="16" y="120" class="muted">Deploy is green</text>
+      <rect x="10" y="130" width="166" height="23" rx="6" fill="#0d1322" stroke="#26314b"/>
+      <text x="20" y="146" class="text">On my way</text>
+      <rect x="184" y="130" width="56" height="23" rx="6" fill="#a78bfa" fill-opacity="0.22"/>
+      <text x="212" y="146" text-anchor="middle" fill="#ddd2ff">Send</text>
+    </g>
+    <!-- Tab C: session e5d2 -->
+    <g transform="translate(980 468)" filter="url(#shadow)">
+      <rect width="250" height="160" rx="12" fill="#0d1322" stroke="#22d3ee" stroke-opacity="0.6" stroke-width="1.25"/>
+      <path d="M1 31H249V148a11 11 0 0 1-11 11H12a11 11 0 0 1-11-11z" fill="#141b2c"/>
+      <circle cx="14" cy="16" r="4" fill="#ff5f57" fill-opacity="0.85"/>
+      <circle cx="27" cy="16" r="4" fill="#febc2e" fill-opacity="0.85"/>
+      <circle cx="40" cy="16" r="4" fill="#28c840" fill-opacity="0.85"/>
+      <path d="M54 31 Q60 31 60 25 V12 Q60 6 66 6 H160 Q166 6 166 12 V25 Q166 31 172 31 Z" fill="#141b2c"/>
+      <circle cx="73" cy="19" r="4" fill="#22d3ee"/>
+      <text x="83" y="23" fill="#dbe3f4" font-size="11.5">Inbox</text>
+      <text x="155" y="23" text-anchor="middle" fill="#56627f" font-size="11">×</text>
+      <text x="180" y="23" fill="#56627f" font-size="14">+</text>
+      <rect x="10" y="36" width="230" height="20" rx="10" fill="#0d1322"/>
+      <text x="22" y="50" class="mono" font-size="10" fill="#7f8cab">localhost/inbox</text>
+      <rect x="160" y="39" width="76" height="14" rx="7" fill="#22d3ee" fill-opacity="0.16"/>
+      <text x="198" y="49.5" text-anchor="middle" class="mono" font-size="9.5" fill="#22d3ee">session e5d2</text>
+      <text x="16" y="78" class="muted">Quarterly report</text>
+      <text x="16" y="99" class="muted">Lunch on Friday?</text>
+      <rect x="10" y="105" width="230" height="20" rx="5" fill="#22d3ee" fill-opacity="0.15"/>
+      <text x="16" y="120" fill="#f3f6fc" font-weight="600">Deploy is green</text>
+      <rect x="10" y="130" width="166" height="23" rx="6" fill="#0d1322" stroke="#26314b"/>
+      <text x="20" y="146" class="text">LGTM</text>
+      <rect x="184" y="130" width="56" height="23" rx="6" fill="#a78bfa" fill-opacity="0.22"/>
+      <text x="212" y="146" text-anchor="middle" fill="#ddd2ff">Send</text>
+    </g>
+  </g>
+
+  <!-- ===================== Legend ===================== -->
+  <g class="sans" font-size="14" transform="translate(520 660)">
+    <rect width="345" height="44" rx="22" fill="#fb923c" fill-opacity="0.10" stroke="#fb923c" stroke-opacity="0.45"/>
+    <text x="172.5" y="27" text-anchor="middle" fill="#fed7aa"><tspan font-weight="700" fill="#fb923c">State</tspan> = attributes on the row</text>
+
+    <rect x="365" width="345" height="44" rx="22" fill="#60a5fa" fill-opacity="0.10" stroke="#60a5fa" stroke-opacity="0.45"/>
+    <text x="537.5" y="27" text-anchor="middle" fill="#bfdbfe"><tspan font-weight="700" fill="#60a5fa">View</tspan> = a calculation of the row</text>
+
+    <rect y="58" width="345" height="44" rx="22" fill="#a78bfa" fill-opacity="0.10" stroke="#a78bfa" stroke-opacity="0.45"/>
+    <text x="172.5" y="85" text-anchor="middle" fill="#ddd6fe"><tspan font-weight="700" fill="#a78bfa">Event</tspan> = an action on the row</text>
+
+    <rect x="365" y="58" width="345" height="44" rx="22" fill="#f87171" fill-opacity="0.10" stroke="#f87171" stroke-opacity="0.45"/>
+    <text x="537.5" y="85" text-anchor="middle" fill="#fecaca"><tspan font-weight="700" fill="#f87171">Reactivity</tspan> = notification → reload the row</text>
+  </g>
+</svg>

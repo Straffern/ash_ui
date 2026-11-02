@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npx esbuild boot.js --bundle --minify --format=iife --outfile=../../priv/static/ash_ui_island.js"
+  }
+}
