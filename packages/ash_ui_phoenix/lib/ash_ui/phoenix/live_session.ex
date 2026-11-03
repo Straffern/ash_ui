@@ -1,14 +1,45 @@
 defmodule AshUi.Phoenix.LiveSession do
   @moduledoc false
 
-  alias AshAuthentication.Phoenix.LiveSession, as: AuthenticationLiveSession
   alias AshUi.Phoenix.RouteMetadata
   import Phoenix.Component, only: [assign: 3]
 
-  defdelegate assign_new_resources(socket, session), to: AshAuthentication.Phoenix.LiveSession
+  # AshAuthentication is an optional dependency. Without it, the session
+  # carries the host's hooks plus the Ash tenant and context, and the host's
+  # own on_mount hooks assign the actor.
+  if Code.ensure_loaded?(AshAuthentication.Phoenix.LiveSession) do
+    defdelegate assign_new_resources(socket, session), to: AshAuthentication.Phoenix.LiveSession
 
-  defdelegate assign_new_resources(socket, session, opts),
-    to: AshAuthentication.Phoenix.LiveSession
+    defdelegate assign_new_resources(socket, session, opts),
+      to: AshAuthentication.Phoenix.LiveSession
+
+    defp base_session(conn, otp_app, hooks),
+      do: AshAuthentication.Phoenix.LiveSession.generate_session(conn, otp_app, hooks)
+
+    defp base_on_mount(name, params, session, socket),
+      do: AshAuthentication.Phoenix.LiveSession.on_mount(name, params, session, socket)
+
+    defp assign_authenticated(socket, session),
+      do: AshAuthentication.Phoenix.LiveSession.assign_new_resources(socket, session)
+  else
+    defp base_session(conn, _otp_app, hooks) do
+      hooks
+      |> Enum.reduce(%{}, fn {m, f, a}, acc -> Map.merge(acc, apply(m, f, [conn | a]) || %{}) end)
+      |> Map.put("tenant", Ash.PlugHelpers.get_tenant(conn))
+      |> Map.put("context", Ash.PlugHelpers.get_context(conn))
+    end
+
+    defp base_on_mount(:default, _params, session, socket) do
+      case socket.assigns[:current_tenant] || session["tenant"] do
+        nil -> {:cont, socket}
+        tenant -> {:cont, Phoenix.Component.assign_new(socket, :current_tenant, fn -> tenant end)}
+      end
+    end
+
+    defp base_on_mount(_name, _params, _session, socket), do: {:cont, socket}
+
+    defp assign_authenticated(socket, _session), do: socket
+  end
 
   def on_mount(:current_user, params, session, socket) do
     socket
@@ -48,7 +79,7 @@ defmodule AshUi.Phoenix.LiveSession do
 
   def on_mount(name, params, session, socket) do
     socket = maybe_assign_otp_app(socket, session)
-    {status, socket} = AuthenticationLiveSession.on_mount(name, params, session, socket)
+    {status, socket} = base_on_mount(name, params, session, socket)
     {status, maybe_put_route_metadata(socket, session)}
   end
 
@@ -58,11 +89,8 @@ defmodule AshUi.Phoenix.LiveSession do
     otp_app = Keyword.get(opts, :otp_app)
     additional_hooks = Keyword.get(opts, :session, [])
 
-    AuthenticationLiveSession.generate_session(
-      conn,
-      otp_app,
-      List.wrap(additional_hooks)
-    )
+    conn
+    |> base_session(otp_app, List.wrap(additional_hooks))
     |> maybe_put_auth_otp_app(otp_app)
     |> maybe_merge_route_metadata(conn)
     |> maybe_put_session_id(conn)
@@ -73,14 +101,16 @@ defmodule AshUi.Phoenix.LiveSession do
   end
 
   def generate_session(conn, otp_app) when is_atom(otp_app) or is_nil(otp_app) do
-    AuthenticationLiveSession.generate_session(conn, otp_app, [])
+    conn
+    |> base_session(otp_app, [])
     |> maybe_put_auth_otp_app(otp_app)
     |> maybe_merge_route_metadata(conn)
     |> maybe_put_session_id(conn)
   end
 
   def generate_session(conn, otp_app, additional_hooks) do
-    AuthenticationLiveSession.generate_session(conn, otp_app, additional_hooks)
+    conn
+    |> base_session(otp_app, additional_hooks)
     |> maybe_put_auth_otp_app(otp_app)
     |> maybe_merge_route_metadata(conn)
     |> maybe_put_session_id(conn)
@@ -90,7 +120,7 @@ defmodule AshUi.Phoenix.LiveSession do
     socket = maybe_assign_otp_app(socket, session)
 
     case Map.get(socket.assigns, :current_user) do
-      nil -> AuthenticationLiveSession.assign_new_resources(socket, session)
+      nil -> assign_authenticated(socket, session)
       _current_user -> socket
     end
   end

@@ -6,7 +6,7 @@ defmodule AshUi.Phoenix.Router do
   alias AshUi.Phoenix.RouteMetadata
 
   defmacro __using__(opts) do
-    presets = Keyword.get(opts, :presets, [AshUi.Phoenix.Presets.AshAuthentication])
+    presets = Keyword.get(opts, :presets, [])
 
     preset_uses =
       Enum.map(presets, fn preset ->
@@ -171,6 +171,7 @@ defmodule AshUi.Phoenix.Router do
   end
 
   defmacro ash_ui_authentication_routes(opts) do
+    require_ash_authentication!("ash_ui_authentication_routes/1")
     pipeline = Keyword.get(opts, :pipeline, :browser)
     scope_path = Keyword.get(opts, :scope, "/")
     user_resource = Keyword.fetch!(opts, :user_resource)
@@ -185,7 +186,7 @@ defmodule AshUi.Phoenix.Router do
       Keyword.get(
         opts,
         :overrides,
-        AshUi.Phoenix.Presets.DaisyUI.ash_authentication_overrides()
+        [AshAuthentication.Phoenix.Overrides.DaisyUI]
       )
 
     quote do
@@ -196,9 +197,7 @@ defmodule AshUi.Phoenix.Router do
           path: unquote(auth_path)
         )
 
-        sign_out_route(AshUi.Phoenix.AuthController, "/sign-out",
-          otp_app: unquote(otp_app)
-        )
+        sign_out_route(AshUi.Phoenix.AuthController, "/sign-out", otp_app: unquote(otp_app))
 
         sign_in_route(
           register_path: unquote(register_path),
@@ -328,11 +327,20 @@ defmodule AshUi.Phoenix.Router do
     sign_out_path = Keyword.get(opts, :sign_out_path, "/sign-out")
     controller = Keyword.get(opts, :controller, quote(do: AuthController))
 
-    resources = AshAuthentication.authenticated_resources(otp_app)
+    require_ash_authentication!("ash_ui_auth_routes/1")
+    resources = apply(AshAuthentication, :authenticated_resources, [otp_app])
 
     quote do
       auth_routes(unquote(controller), unquote(resources), path: unquote(path))
       sign_out_route(unquote(controller), unquote(sign_out_path))
+    end
+  end
+
+  defp require_ash_authentication!(macro) do
+    unless Code.ensure_loaded?(AshAuthentication.Phoenix.Router) do
+      raise ArgumentError,
+            "#{macro} needs the optional :ash_authentication_phoenix dependency. " <>
+              "Add it to your deps and `use AshUi.Phoenix.Router, presets: [AshUi.Phoenix.Presets.AshAuthentication]`."
     end
   end
 

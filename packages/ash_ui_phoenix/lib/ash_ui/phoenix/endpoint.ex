@@ -206,6 +206,9 @@ defmodule AshUi.Phoenix.Endpoint do
         end
       end
 
+    router_presets =
+      if authentication_routes, do: [AshUi.Phoenix.Presets.AshAuthentication], else: []
+
     authentication_routes_ast =
       if authentication_routes do
         quote do
@@ -217,7 +220,7 @@ defmodule AshUi.Phoenix.Endpoint do
       defmodule unquote(router) do
         @moduledoc false
 
-        use AshUi.Phoenix.Router
+        use AshUi.Phoenix.Router, presets: unquote(router_presets)
 
         unquote(browser_pipeline_ast)
         unquote(authentication_routes_ast)

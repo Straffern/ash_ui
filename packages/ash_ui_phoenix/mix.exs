@@ -28,7 +28,7 @@ defmodule AshUiPhoenix.MixProject do
     [
       {:ash, "~> 3.36"},
       sibling(:ash_ui, "../.."),
-      {:ash_authentication_phoenix, "~> 2.0"},
+      {:ash_authentication_phoenix, "~> 2.0", optional: true},
       {:phoenix, "~> 1.8.0"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_view, "~> 1.1.0"},
@@ -47,7 +47,16 @@ defmodule AshUiPhoenix.MixProject do
       licenses: ["Apache-2.0"],
       links: %{"GitHub" => @source_url},
       maintainers: ["bob@hyperbob.ai"],
-      files: ["lib", "priv/static", ".formatter.exs", "mix.exs", "README*", "CHANGELOG*", "LICENSE*", "NOTICE*"]
+      files: [
+        "lib",
+        "priv/static",
+        ".formatter.exs",
+        "mix.exs",
+        "README*",
+        "CHANGELOG*",
+        "LICENSE*",
+        "NOTICE*"
+      ]
     ]
   end
 
