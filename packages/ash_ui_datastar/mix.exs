@@ -11,6 +11,7 @@ defmodule AshUiDatastar.MixProject do
       description: description(),
       package: package(),
       source_url: @source_url,
+      docs: docs(),
       start_permanent: Mix.env() == :prod,
       consolidate_protocols: Mix.env() != :test,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -35,6 +36,7 @@ defmodule AshUiDatastar.MixProject do
       sibling(:ash_ui, "../.."),
       {:plug, "~> 1.16"},
       {:jason, "~> 1.2"},
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
       {:bandit, "~> 1.6", only: :test},
       {:simple_sat, "~> 0.1", only: :test}
     ]
@@ -68,6 +70,13 @@ defmodule AshUiDatastar.MixProject do
     if System.get_env("ASH_UI_HEX"),
       do: {app, "~> 0.1.0", opts},
       else: {app, Keyword.put(opts, :path, path)}
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      extras: ["README.md", "CHANGELOG.md", "LICENSE", "NOTICE"]
+    ]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
